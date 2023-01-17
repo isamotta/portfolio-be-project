@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../app');
 const db = require("../db/connection");
 const seed = require('../db/seeds/seed');
-const testData = require('../db/data/test-data/index');;
+const testData = require('../db/data/test-data/index');
 
 beforeEach(() => {
     return seed(testData);
@@ -64,6 +64,41 @@ describe('/api/reviews', () => {
             .expect(200)
             .then(({ body }) => {
                 expect(body.reviews).toBeSortedBy('created_at', { descending: true });
+            })
+    });
+})
+
+describe('/api/reviews/:review_id', () => {
+    test('responds with a 200 status code and a review object with review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at properties', () => {
+        return request(app)
+            .get('/api/reviews/1')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.review.review_id).toBe(1);
+                expect(typeof body.review.owner).toBe('string');
+                expect(typeof body.review.title).toBe('string');
+                expect(typeof body.review.category).toBe('string');
+                expect(typeof body.review.review_img_url).toBe('string');
+                expect(typeof body.review.created_at).toBe('string');
+                expect(typeof body.review.votes).toBe('number');
+                expect(typeof body.review.designer).toBe('string');
+                expect(typeof body.review.review_body).toBe('string');
+            })
+    });
+    test('responds with a 404 status code when review_id does not exist', () => {
+        return request(app)
+            .get('/api/reviews/3000')
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('review_id not found');
+            })
+    });
+    test('responds with a 400 status code when passed a review_id of the incorrect data type', () => {
+        return request(app)
+            .get('/api/reviews/hi')
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request');
             })
     });
 })
