@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../app');
 const db = require("../db/connection");
 const seed = require('../db/seeds/seed');
-const testData = require('../db/data/test-data/index');
+const testData = require('../db/data/test-data/index');;
 
 beforeEach(() => {
     return seed(testData);
@@ -34,6 +34,36 @@ describe("/api/categories", () => {
                     expect(category).toHaveProperty('slug');
                     expect(category).toHaveProperty('description');
                 });
+            })
+    });
+})
+
+describe('/api/reviews', () => {
+    test('responds with a 200 status code and with an array of review objects with owner, title, review_id, category, review_img_url, created_at, votes, designer, comment_count properties', () => {
+        return request(app)
+            .get('/api/reviews')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.reviews.length).toBe(13)
+                body.reviews.forEach(review => {
+                    expect(typeof review.owner).toBe('string');
+                    expect(typeof review.title).toBe('string');
+                    expect(typeof review.review_id).toBe('number');
+                    expect(typeof review.category).toBe('string');
+                    expect(typeof review.review_img_url).toBe('string');
+                    expect(typeof review.created_at).toBe('string');
+                    expect(typeof review.votes).toBe('number');
+                    expect(typeof review.designer).toBe('string');
+                    expect(typeof review.comment_count).toBe('number');
+                })
+            })
+    });
+    test('responds with an array of review objects sorted by date in descending order', () => {
+        return request(app)
+            .get('/api/reviews')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.reviews).toBeSortedBy('created_at', { descending: true });
             })
     });
 })
