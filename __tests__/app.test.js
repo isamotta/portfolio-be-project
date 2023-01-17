@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../app');
 const db = require("../db/connection");
 const seed = require('../db/seeds/seed');
-const testData = require('../db/data/test-data/index');
+const testData = require('../db/data/test-data/index');;
 
 beforeEach(() => {
     return seed(testData);
@@ -34,6 +34,42 @@ describe("/api/categories", () => {
                     expect(category).toHaveProperty('slug');
                     expect(category).toHaveProperty('description');
                 });
+            })
+    });
+})
+
+describe('/api/reviews', () => {
+    test('responds with a 200 status code', () => {
+        return request(app)
+            .get('/api/reviews')
+            .expect(200)
+    })
+    test('responds with an array of review objects with owner, title, review_id, category, review_img_url, created_at, votes, designer, comment_count properties', () => {
+        return request(app)
+            .get('/api/reviews')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.reviews.length).toBe(13)
+                body.reviews.forEach(review => {
+                    expect(review).toHaveProperty('owner');
+                    expect(review).toHaveProperty('title');
+                    expect(review).toHaveProperty('review_id');
+                    expect(review).toHaveProperty('category');
+                    expect(review).toHaveProperty('review_img_url');
+                    expect(review).toHaveProperty('created_at');
+                    expect(review).toHaveProperty('votes');
+                    expect(review).toHaveProperty('designer');
+                    expect(review).toHaveProperty('comment_count');
+                })
+            })
+    });
+    test('responds with an array of review objects sorted by date in descending order', () => {
+        return request(app)
+            .get('/api/reviews')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.reviews[body.reviews.length - 1].review_id).toBe(13);
+                expect(body.reviews[0].review_id).toBe(7);
             })
     });
 })

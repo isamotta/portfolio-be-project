@@ -6,4 +6,4 @@ const fetchAllCategories = () => {
     })
 }
 
-module.exports = { fetchAllCategories };
+module.exports = fetchAllCategories;

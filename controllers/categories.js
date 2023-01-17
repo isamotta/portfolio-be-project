@@ -1,4 +1,4 @@
-const { fetchAllCategories } = require('../models/categories')
+const fetchAllCategories = require('../models/categories')
 
 const getAllCategories = (req, res, next) => {
     fetchAllCategories().then((result) => {
@@ -8,4 +8,4 @@ const getAllCategories = (req, res, next) => {
     })
 }
 
-module.exports = { getAllCategories }
+module.exports = getAllCategories;
