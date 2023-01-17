@@ -2,8 +2,7 @@ const request = require('supertest');
 const app = require('../app');
 const db = require("../db/connection");
 const seed = require('../db/seeds/seed');
-const testData = require('../db/data/test-data/index'); const { expect } = require('@jest/globals');
-;
+const testData = require('../db/data/test-data/index');
 
 beforeEach(() => {
     return seed(testData);
@@ -75,15 +74,15 @@ describe('/api/reviews/:review_id', () => {
             .get('/api/reviews/1')
             .expect(200)
             .then(({ body }) => {
-                expect(typeof body.review[0].owner).toBe('string');
-                expect(typeof body.review[0].title).toBe('string');
-                expect(typeof body.review[0].review_id).toBe('number');
-                expect(typeof body.review[0].category).toBe('string');
-                expect(typeof body.review[0].review_img_url).toBe('string');
-                expect(typeof body.review[0].created_at).toBe('string');
-                expect(typeof body.review[0].votes).toBe('number');
-                expect(typeof body.review[0].designer).toBe('string');
-                expect(typeof body.review[0].review_body).toBe('string');
+                expect(body.review.review_id).toBe(1);
+                expect(typeof body.review.owner).toBe('string');
+                expect(typeof body.review.title).toBe('string');
+                expect(typeof body.review.category).toBe('string');
+                expect(typeof body.review.review_img_url).toBe('string');
+                expect(typeof body.review.created_at).toBe('string');
+                expect(typeof body.review.votes).toBe('number');
+                expect(typeof body.review.designer).toBe('string');
+                expect(typeof body.review.review_body).toBe('string');
             })
     });
     test('responds with a 404 status code when review_id does not exist', () => {
@@ -99,7 +98,6 @@ describe('/api/reviews/:review_id', () => {
             .get('/api/reviews/hi')
             .expect(400)
             .then(({ body }) => {
-                console.log(body)
                 expect(body.message).toBe('bad request');
             })
     });

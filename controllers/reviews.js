@@ -10,7 +10,7 @@ const getAllReviews = (req, res, next) => {
 
 const getReviewById = (req, res, next) => {
     const { review_id } = req.params;
-    fecthReviewById(review_id).then((result) => {
+    fecthReviewById(review_id).then(([result]) => {
         res.status(200).send({ review: result })
     }).catch((err) => {
         next(err);
