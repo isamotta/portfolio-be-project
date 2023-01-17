@@ -14,8 +14,4 @@ app.use((err, req, res, next) => {
     res.status(500).send({ message: 'internal server error' });
 });
 
-app.listen(9090, () => {
-    console.log(`listening on 9090...`);
-});
-
 module.exports = app;

@@ -39,27 +39,22 @@ describe("/api/categories", () => {
 })
 
 describe('/api/reviews', () => {
-    test('responds with a 200 status code', () => {
-        return request(app)
-            .get('/api/reviews')
-            .expect(200)
-    })
-    test('responds with an array of review objects with owner, title, review_id, category, review_img_url, created_at, votes, designer, comment_count properties', () => {
+    test('responds with a 200 status code and with an array of review objects with owner, title, review_id, category, review_img_url, created_at, votes, designer, comment_count properties', () => {
         return request(app)
             .get('/api/reviews')
             .expect(200)
             .then(({ body }) => {
                 expect(body.reviews.length).toBe(13)
                 body.reviews.forEach(review => {
-                    expect(review).toHaveProperty('owner');
-                    expect(review).toHaveProperty('title');
-                    expect(review).toHaveProperty('review_id');
-                    expect(review).toHaveProperty('category');
-                    expect(review).toHaveProperty('review_img_url');
-                    expect(review).toHaveProperty('created_at');
-                    expect(review).toHaveProperty('votes');
-                    expect(review).toHaveProperty('designer');
-                    expect(review).toHaveProperty('comment_count');
+                    expect(typeof review.owner).toBe('string');
+                    expect(typeof review.title).toBe('string');
+                    expect(typeof review.review_id).toBe('number');
+                    expect(typeof review.category).toBe('string');
+                    expect(typeof review.review_img_url).toBe('string');
+                    expect(typeof review.created_at).toBe('string');
+                    expect(typeof review.votes).toBe('number');
+                    expect(typeof review.designer).toBe('string');
+                    expect(typeof review.comment_count).toBe('number');
                 })
             })
     });
@@ -68,8 +63,7 @@ describe('/api/reviews', () => {
             .get('/api/reviews')
             .expect(200)
             .then(({ body }) => {
-                expect(body.reviews[body.reviews.length - 1].review_id).toBe(13);
-                expect(body.reviews[0].review_id).toBe(7);
+                expect(body.reviews).toBeSortedBy('created_at', { descending: true });
             })
     });
 })
