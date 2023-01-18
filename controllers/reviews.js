@@ -21,12 +21,9 @@ const getReviewById = (req, res, next) => {
 
 const getCommentsById = (req, res, next) => {
     const { review_id } = req.params;
-    fecthReviewById(review_id)
-        .then(() => {
-            fecthCommentsByReviewId(review_id)
-                .then((comments) => {
-                    res.status(200).send({ comments })
-                })
+    Promise.all([fecthReviewById(review_id), fecthCommentsByReviewId(review_id)])
+        .then((values) => {
+            res.status(200).send({ comments: values[1] })
         })
         .catch((err) => {
             next(err);

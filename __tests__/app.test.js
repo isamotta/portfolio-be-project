@@ -135,5 +135,13 @@ describe('/api/reviews/:review_id/comments', () => {
             .then(({ body: { comments } }) => {
                 expect(comments.length).toBe(0);
             })
-    })
+    });
+    test('responds with a 400 status code when passed a review_id of the incorrect data type', () => {
+        return request(app)
+            .get('/api/reviews/hi/comments')
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request');
+            })
+    });
 })
