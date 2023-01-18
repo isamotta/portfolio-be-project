@@ -1,12 +1,15 @@
 const express = require('express');
 const getAllCategories = require('./controllers/categories');
-const { getAllReviews, getReviewById, getCommentsById } = require('./controllers/reviews');
+const { getAllReviews, getReviewById, getCommentsById, postComment } = require('./controllers/reviews');
 const app = express();
+
+app.use(express.json());
 
 app.get('/api/categories', getAllCategories);
 app.get('/api/reviews', getAllReviews);
 app.get('/api/reviews/:review_id', getReviewById);
-app.get('/api/reviews/:review_id/comments', getCommentsById)
+app.get('/api/reviews/:review_id/comments', getCommentsById);
+app.post('/api/reviews/:review_id/comments', postComment)
 
 app.use((err, req, res, next) => {
     if (err.status && err.message) {
@@ -16,8 +19,15 @@ app.use((err, req, res, next) => {
     }
 })
 app.use((err, req, res, next) => {
-    if (err.code === '22P02') {
+    if (err.code === '22P02' || err.code === '23502') {
         res.status(400).send({ message: 'bad request' });
+    } else {
+        next(err);
+    }
+})
+app.use((err, req, res, next) => {
+    if (err.code === '23503') {
+        res.status(404).send({ message: 'review_id not found' });
     } else {
         next(err);
     }

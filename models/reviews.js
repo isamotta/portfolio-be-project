@@ -27,4 +27,11 @@ const fecthCommentsByReviewId = (review_id) => {
     return db.query(query, [review_id]).then(({ rows }) => rows)
 }
 
-module.exports = { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId };
+const addComment = (review_id, body, username) => {
+    const query = `INSERT INTO comments (body, review_id, author) VALUES ($1, $2, (SELECT username FROM users WHERE users.username = $3)) RETURNING comment_id, body, review_id, author;`;
+    return db.query(query, [body, review_id, username]).then(({ rows }) => {
+        return rows;
+    })
+}
+
+module.exports = { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId, addComment };

@@ -3,6 +3,7 @@ const app = require('../app');
 const db = require("../db/connection");
 const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data/index');
+const { expect } = require('@jest/globals');
 
 beforeEach(() => {
     return seed(testData);
@@ -142,6 +143,41 @@ describe('/api/reviews/:review_id/comments', () => {
             .expect(400)
             .then(({ body }) => {
                 expect(body.message).toBe('bad request');
+            })
+    });
+})
+
+describe('POST - /api/reviews/:review_id/comments', () => {
+    test('responds with a 201 status code and accepts a comment', () => {
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send({ username: 'philippaclaire9', body: 'love this game!' })
+            .expect(201)
+            .then(({ body }) => {
+                expect(body.newComment).toEqual({
+                    comment_id: 7,
+                    body: 'love this game!',
+                    review_id: 1,
+                    author: 'philippaclaire9'
+                })
+            })
+    });
+    test('responds with a 404 status code when given a review_id does not exist', () => {
+        return request(app)
+            .post('/api/reviews/456251/comments')
+            .send({ username: 'philippaclaire9', body: 'love this game!' })
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('review_id not found')
+            })
+    });
+    test('responds with a 400 status code when given a username thats does not exist', () => {
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send({ username: 'isa', body: 'love this game!' })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request')
             })
     });
 })
