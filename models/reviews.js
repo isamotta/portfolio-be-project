@@ -22,4 +22,9 @@ const fecthReviewById = (review_id) => {
     })
 }
 
-module.exports = { fetchAllReviews, fecthReviewById };
+const fecthCommentsByReviewId = (review_id) => {
+    const query = `SELECT * FROM comments WHERE review_id = $1`;
+    return db.query(query, [review_id]).then(({ rows }) => rows)
+}
+
+module.exports = { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId };
