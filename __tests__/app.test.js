@@ -102,3 +102,38 @@ describe('/api/reviews/:review_id', () => {
             })
     });
 })
+
+describe('/api/reviews/:review_id/comments', () => {
+    test('responds with a 200 status code and an array of comments object of the given review_id with comment_id, votes, created_at, author, body, review_id properties', () => {
+        return request(app)
+            .get('/api/reviews/2/comments')
+            .expect(200)
+            .then(({ body: { comments } }) => {
+                expect(comments.length).toBe(3);
+                comments.forEach(comment => {
+                    expect(typeof comment.review_id).toBe('number');
+                    expect(typeof comment.comment_id).toBe('number');
+                    expect(typeof comment.votes).toBe('number');
+                    expect(typeof comment.created_at).toBe('string');
+                    expect(typeof comment.author).toBe('string');
+                    expect(typeof comment.body).toBe('string');
+                })
+            })
+    });
+    test('responds with a 404 status code when given review_id does not exist', () => {
+        return request(app)
+            .get('/api/reviews/302/comments')
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('review_id not found');
+            })
+    });
+    test('responds with a 200 status code when given a valid review_id that does not have comments', () => {
+        return request(app)
+            .get('/api/reviews/1/comments')
+            .expect(200)
+            .then(({ body: { comments } }) => {
+                expect(comments.length).toBe(0);
+            })
+    })
+})
