@@ -18,7 +18,7 @@ const fecthReviewById = (review_id) => {
         if (rows.length === 0) {
             return Promise.reject({ status: 404, message: 'review_id not found' })
         }
-        return rows;
+        return rows[0];
     })
 }
 
@@ -27,4 +27,11 @@ const fecthCommentsByReviewId = (review_id) => {
     return db.query(query, [review_id]).then(({ rows }) => rows)
 }
 
-module.exports = { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId };
+const addComment = (review_id, body, username) => {
+    const query = `INSERT INTO comments (body, review_id, author) VALUES ($1, $2, (SELECT username FROM users WHERE users.username = $3)) RETURNING comment_id, body, review_id, author;`;
+    return db.query(query, [body, review_id, username]).then(({ rows }) => {
+        return rows[0];
+    })
+}
+
+module.exports = { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId, addComment };

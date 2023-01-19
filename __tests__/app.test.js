@@ -23,7 +23,7 @@ describe("/not-a-route", () => {
     });
 })
 
-describe("/api/categories", () => {
+describe("GET - /api/categories", () => {
     test('responds with a 200 status code and all the categories with a slug and a description property', () => {
         return request(app)
             .get("/api/categories")
@@ -38,7 +38,7 @@ describe("/api/categories", () => {
     });
 })
 
-describe('/api/reviews', () => {
+describe('GET - /api/reviews', () => {
     test('responds with a 200 status code and with an array of review objects with owner, title, review_id, category, review_img_url, created_at, votes, designer, comment_count properties', () => {
         return request(app)
             .get('/api/reviews')
@@ -68,7 +68,7 @@ describe('/api/reviews', () => {
     });
 })
 
-describe('/api/reviews/:review_id', () => {
+describe('GET - /api/reviews/:review_id', () => {
     test('responds with a 200 status code and a review object with review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at properties', () => {
         return request(app)
             .get('/api/reviews/1')
@@ -103,7 +103,7 @@ describe('/api/reviews/:review_id', () => {
     });
 })
 
-describe('/api/reviews/:review_id/comments', () => {
+describe('GET - /api/reviews/:review_id/comments', () => {
     test('responds with a 200 status code and an array of comments object of the given review_id with comment_id, votes, created_at, author, body, review_id properties', () => {
         return request(app)
             .get('/api/reviews/2/comments')
@@ -142,6 +142,69 @@ describe('/api/reviews/:review_id/comments', () => {
             .expect(400)
             .then(({ body }) => {
                 expect(body.message).toBe('bad request');
+            })
+    });
+})
+
+describe('POST - /api/reviews/:review_id/comments', () => {
+    test('responds with a 201 status code and accepts a comment', () => {
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send({ username: 'philippaclaire9', body: 'love this game!' })
+            .expect(201)
+            .then(({ body }) => {
+                expect(body).toHaveProperty('newComment');
+                expect(body.newComment).toEqual({
+                    comment_id: 7,
+                    body: 'love this game!',
+                    review_id: 1,
+                    author: 'philippaclaire9'
+                })
+            })
+    });
+    test('responds with a 404 status code when given a review_id does not exist', () => {
+        return request(app)
+            .post('/api/reviews/456251/comments')
+            .send({ username: 'philippaclaire9', body: 'love this game!' })
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('review_id not found')
+            })
+    });
+    test('responds with a 400 status code when given a username thats does not exist', () => {
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send({ username: 'isa', body: 'love this game!' })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request')
+            })
+    });
+    test('responds with a 400 status code when passed an invalid review_id', () => {
+        return request(app)
+            .post('/api/reviews/dogs/comments')
+            .send({ username: 'philippaclaire9', body: 'love this game!' })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request')
+            })
+    });
+    test('responds with a 400 status code when no body is passed', () => {
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send({})
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request')
+            })
+    });
+    test('responds with a 400 status code when key is missing in the passed body', () => {
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send({ username: 'philippaclaire9' })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request')
             })
     });
 })
