@@ -1,7 +1,8 @@
 const { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId, addComment, incrementVotes } = require('../models/reviews')
 
 const getAllReviews = (req, res, next) => {
-    fetchAllReviews().then((result) => {
+    const { category, sort_by, order } = req.query;
+    fetchAllReviews(sort_by, order, category).then((result) => {
         res.status(200).send({ reviews: result });
     }).catch((err) => {
         next(err);
