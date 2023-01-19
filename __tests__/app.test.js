@@ -3,6 +3,7 @@ const app = require('../app');
 const db = require("../db/connection");
 const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data/index');
+const { expect } = require('@jest/globals');
 
 beforeEach(() => {
     return seed(testData);
@@ -205,6 +206,96 @@ describe('POST - /api/reviews/:review_id/comments', () => {
             .expect(400)
             .then(({ body }) => {
                 expect(body.message).toBe('bad request')
+            })
+    });
+})
+describe('PATCH - /api/reviews/:review_id', () => {
+    test('responds with a 200 status code and a review object with votes property incremented', () => {
+        return request(app)
+            .patch('/api/reviews/1')
+            .send({ inc_votes: 1 })
+            .expect(200)
+            .then(({ body }) => {
+                expect(body).toHaveProperty('review');
+                expect(body.review).toEqual({
+                    review_id: 1,
+                    title: 'Agricola',
+                    designer: 'Uwe Rosenberg',
+                    owner: 'mallionaire',
+                    review_img_url:
+                        'https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700',
+                    review_body: 'Farmyard fun!',
+                    category: 'euro game',
+                    votes: 2
+                })
+            })
+    });
+    test('adds the new ammount of votes in the database', () => {
+        return request(app)
+            .patch('/api/reviews/1')
+            .send({ inc_votes: 4 })
+            .expect(200)
+            .then(() => {
+                return request(app)
+                    .get('/api/reviews/1')
+                    .expect(200)
+                    .then(({ body }) => {
+                        expect(body.review.votes).toBe(5)
+                    })
+            })
+    });
+    test('responds with a 200 status code and a review object with votes property decremented', () => {
+        return request(app)
+            .patch('/api/reviews/1')
+            .send({ inc_votes: -1 })
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.review.votes).toBe(0)
+            })
+    });
+    test('responds with a 404 status code when given a review_id does not exist', () => {
+        return request(app)
+            .patch('/api/reviews/45632')
+            .send({ inc_votes: 1 })
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('review_id not found');
+            })
+    });
+    test('responds with a 400 status code when given an invalid review_id', () => {
+        return request(app)
+            .patch('/api/reviews/isa')
+            .send({ inc_votes: 1 })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request');
+            })
+    });
+    test('responds with a 400 status code when no increment votes is passed', () => {
+        return request(app)
+            .patch('/api/reviews/1')
+            .send({})
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request');
+            })
+    });
+    test('responds with a 400 status code when passed an invalid increment votes', () => {
+        return request(app)
+            .patch('/api/reviews/1')
+            .send({ inc_votes: 'one' })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request');
+            })
+    });
+    test('responds with a 200 status code ignoring additional properties passed', () => {
+        return request(app)
+            .patch('/api/reviews/1')
+            .send({ inc_votes: 1, username: 'isa' })
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.review.votes).toBe(2);
             })
     });
 })

@@ -34,4 +34,18 @@ const addComment = (review_id, body, username) => {
     })
 }
 
-module.exports = { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId, addComment };
+const incrementVotes = (review_id, inc_votes) => {
+    const query = `UPDATE reviews SET votes = votes + $1 WHERE review_id = $2`;
+    return db.query(query, [inc_votes, review_id])
+        .then(() => {
+            return db.query(`SELECT review_id, title, designer, owner, review_img_url, review_body, category, votes FROM reviews WHERE review_id = $1`, [review_id])
+                .then(({ rows }) => {
+                    if (rows.length === 0) {
+                        return Promise.reject({ status: 404, message: 'review_id not found' })
+                    }
+                    return rows[0]
+                })
+        })
+}
+
+module.exports = { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId, addComment, incrementVotes };
