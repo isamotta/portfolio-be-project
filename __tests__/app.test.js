@@ -230,6 +230,20 @@ describe('PATCH - /api/reviews/:review_id', () => {
                 })
             })
     });
+    test('adds the new ammount of votes in the database', () => {
+        return request(app)
+            .patch('/api/reviews/1')
+            .send({ inc_votes: 4 })
+            .expect(200)
+            .then(() => {
+                return request(app)
+                    .get('/api/reviews/1')
+                    .expect(200)
+                    .then(({ body }) => {
+                        expect(body.review.votes).toBe(5)
+                    })
+            })
+    });
     test('responds with a 200 status code and a review object with votes property decremented', () => {
         return request(app)
             .patch('/api/reviews/1')
@@ -275,13 +289,13 @@ describe('PATCH - /api/reviews/:review_id', () => {
                 expect(body.message).toBe('bad request');
             })
     });
-    test('responds with a 400 status code when passed other properties with inc_votes', () => {
+    test('responds with a 200 status code ignoring additional properties passed', () => {
         return request(app)
             .patch('/api/reviews/1')
             .send({ inc_votes: 1, username: 'isa' })
-            .expect(400)
+            .expect(200)
             .then(({ body }) => {
-                expect(body.message).toBe('bad request');
+                expect(body.review.votes).toBe(2);
             })
     });
 })

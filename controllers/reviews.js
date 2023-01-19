@@ -48,10 +48,6 @@ const patchVotes = (req, res, next) => {
 
     incrementVotes(review_id, inc_votes)
         .then((result) => {
-            if (Object.keys(req.body).length > 1) {
-                return Promise.reject({ status: 400, message: 'bad request' });
-            }
-
             res.status(200).send({ review: result });
         })
         .catch((err) => {
