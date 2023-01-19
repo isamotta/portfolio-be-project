@@ -1,4 +1,4 @@
-const { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId, addComment } = require('../models/reviews')
+const { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId, addComment, incrementVotes } = require('../models/reviews')
 
 const getAllReviews = (req, res, next) => {
     fetchAllReviews().then((result) => {
@@ -42,4 +42,21 @@ const postComment = (req, res, next) => {
         })
 }
 
-module.exports = { getAllReviews, getReviewById, getCommentsById, postComment };
+const patchVotes = (req, res, next) => {
+    const { review_id } = req.params;
+    const { inc_votes } = req.body;
+
+    incrementVotes(review_id, inc_votes)
+        .then((result) => {
+            if (Object.keys(req.body).length > 1) {
+                return Promise.reject({ status: 400, message: 'bad request' });
+            }
+
+            res.status(200).send({ review: result });
+        })
+        .catch((err) => {
+            next(err);
+        })
+}
+
+module.exports = { getAllReviews, getReviewById, getCommentsById, postComment, patchVotes };
