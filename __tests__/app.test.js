@@ -299,3 +299,19 @@ describe('PATCH - /api/reviews/:review_id', () => {
             })
     });
 })
+
+describe('GET - /api/users', () => {
+    test('responds with a 200 status code and an array of users object with username, name and avatar_url properties', () => {
+        return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.users.length).toBe(4)
+                body.users.forEach(user => {
+                    expect(typeof user.name).toBe('string');
+                    expect(typeof user.username).toBe('string');
+                    expect(typeof user.avatar_url).toBe('string');
+                })
+            })
+    });
+})
