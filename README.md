@@ -1,8 +1,8 @@
 # Northcoders House of Games API
 
-This is an API of games reviews, written using Node.js (minimum version 19.3) and postgreSQL (minimum version 12.12).
-
 ## Background
+
+This is an API of games reviews, written using Node.js (minimum version 19.3) and postgreSQL (minimum version 12.12).
 
 I am building an API for the purpose of accessing application data programmatically. The intention here is to mimic the building of a real world backend service (such as reddit) which should provide this information to the front end architecture.
 
@@ -16,18 +16,26 @@ To check all the available endpoints click [here](https://nc-games-be-project.on
 
 ## Installation
 
-Clone this repo down on to you local machine https://github.com/isamotta/portfolio-be-project.git
+Clone this [repo](https://github.com/isamotta/portfolio-be-project.git) down on to you local machine.
 
-You will need to have install:
+You will need to have installed:
 
 > node
+> 
 > postgreSQL
+> 
 > dotenv
+> 
 > express
+> 
 > pg
+> 
 > pg-format
+> 
 > jest
+> 
 > jest-sorted
+> 
 > supertest
 
 ## To connect the database locally
@@ -38,4 +46,4 @@ You'll need to create the environment variables in order to successfully connect
 
 ## Testing
 
-To test run the command: **npm run test**
+Run the command: **npm test**
