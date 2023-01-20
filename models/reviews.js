@@ -37,7 +37,7 @@ const fetchCategoryBySlug = (category) => {
     })
 }
 
-const fecthReviewById = (review_id) => {
+const fetchReviewById = (review_id) => {
     const query = `SELECT * FROM reviews WHERE review_id = $1`
     return db.query(query, [review_id]).then(({ rows }) => {
         if (rows.length === 0) {
@@ -47,7 +47,7 @@ const fecthReviewById = (review_id) => {
     })
 }
 
-const fecthCommentsByReviewId = (review_id) => {
+const fetchCommentsByReviewId = (review_id) => {
     const query = `SELECT * FROM comments WHERE review_id = $1`;
     return db.query(query, [review_id]).then(({ rows }) => rows)
 }
@@ -73,4 +73,4 @@ const incrementVotes = (review_id, inc_votes) => {
         })
 }
 
-module.exports = { fecthCommentsByReviewId, fecthReviewById, fetchAllReviews, fetchCategoryBySlug, addComment, incrementVotes };
+module.exports = { fetchCommentsByReviewId, fetchReviewById, fetchAllReviews, fetchCategoryBySlug, addComment, incrementVotes };
