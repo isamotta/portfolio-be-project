@@ -127,20 +127,32 @@ describe('GET - /api/reviews', () => {
 })
 
 describe('GET - /api/reviews/:review_id', () => {
-    test('responds with a 200 status code and a review object with review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at properties', () => {
+    test('responds with a 200 status code and a review object with review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at and comment_count properties', () => {
         return request(app)
             .get('/api/reviews/1')
             .expect(200)
             .then(({ body }) => {
-                expect(body.review.review_id).toBe(1);
-                expect(typeof body.review.owner).toBe('string');
-                expect(typeof body.review.title).toBe('string');
-                expect(typeof body.review.category).toBe('string');
-                expect(typeof body.review.review_img_url).toBe('string');
-                expect(typeof body.review.created_at).toBe('string');
-                expect(typeof body.review.votes).toBe('number');
-                expect(typeof body.review.designer).toBe('string');
-                expect(typeof body.review.review_body).toBe('string');
+                const reviewObj = {
+                    review_id: 1,
+                    title: 'Agricola',
+                    designer: 'Uwe Rosenberg',
+                    owner: 'mallionaire',
+                    review_img_url:
+                        'https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700',
+                    review_body: 'Farmyard fun!',
+                    category: 'euro game',
+                    votes: 1
+                }
+
+                expect(body.review).toMatchObject(reviewObj);
+            })
+    });
+    test('responds with a review object with a comment_count property', () => {
+        return request(app)
+            .get('/api/reviews/1')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.review.comment_count).toBe(0);
             })
     });
     test('responds with a 404 status code when review_id does not exist', () => {

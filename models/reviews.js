@@ -38,7 +38,8 @@ const fetchCategoryBySlug = (category) => {
 }
 
 const fetchReviewById = (review_id) => {
-    const query = `SELECT * FROM reviews WHERE review_id = $1`
+    const query = `SELECT *, CAST((SELECT COUNT(comments.review_id) FROM comments WHERE comments.review_id = reviews.review_id) AS int) AS comment_count FROM reviews WHERE review_id = $1`;
+
     return db.query(query, [review_id]).then(({ rows }) => {
         if (rows.length === 0) {
             return Promise.reject({ status: 404, message: 'review_id not found' })
