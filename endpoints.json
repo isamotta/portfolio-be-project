@@ -16,7 +16,11 @@
   },
   "GET /api/reviews": {
     "description": "serves an array of all reviews",
-    "queries": ["category", "sort_by", "order"],
+    "queries": [
+      "category",
+      "sort_by",
+      "order"
+    ],
     "exampleResponse": {
       "reviews": [
         {
@@ -30,5 +34,94 @@
         }
       ]
     }
+  },
+  "GET /api/reviews/:review_id": {
+    "description": "serves an object of the review selected by passed review_id",
+    "queries": [],
+    "exampleResponse": {
+      "review": {
+        "review_id": 1,
+        "title": "Agricola",
+        "designer": "Uwe Rosenberg",
+        "owner": "mallionaire",
+        "review_img_url": "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+        "review_body": "Farmyard fun!",
+        "category": "euro game",
+        "votes": 1,
+        "comment_count": 0,
+        "created_at": 1610964020514
+      }
+    }
+  },
+  "GET /api/reviews/:review_id/comments": {
+    "description": "serves an array of all comments of the review selected by passed review_id",
+    "queries": [],
+    "exampleResponse": [
+      {
+        "comments": [
+          {
+            "body": "I loved this game too!",
+            "votes": 16,
+            "author": "bainesface",
+            "review_id": 2,
+            "created_at": 1511354613389
+          },
+          {
+            "body": "EPIC board game!",
+            "votes": 16,
+            "author": "bainesface",
+            "review_id": 2,
+            "created_at": 1511354163389
+          }
+        ]
+      }
+    ]
+  },
+  "POST /api/reviews/:review_id/comments": {
+    "description": "serves an object with the new comment of the review selected by passed review_id added in the database",
+    "queries": [],
+    "exampleResponse": {
+      "newComment": {
+        "comment_id": 7,
+        "body": "love this game!",
+        "review_id": 1,
+        "author": "philippaclaire9"
+      }
+    }
+  },
+  "PACTH /api/reviews/:review_id": {
+    "description": "serves an object of the review selected by passed review_id with votes property incremented",
+    "queries": [],
+    "exampleResponse": {
+      "review": {
+        "review_id": 1,
+        "title": "Agricola",
+        "designer": "Uwe Rosenberg",
+        "owner": "mallionaire",
+        "review_img_url": "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+        "review_body": "Farmyard fun!",
+        "category": "euro game",
+        "votes": 2,
+        "created_at": 1610964020514
+      }
+    }
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "mallionaire",
+          "name": "haz",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "delete the comment passed by comment_id",
+    "queries": [],
+    "exampleResponse": {}
   }
 }
