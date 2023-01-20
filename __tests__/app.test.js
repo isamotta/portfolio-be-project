@@ -3,6 +3,8 @@ const app = require('../app');
 const db = require("../db/connection");
 const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data/index');
+const { expect } = require('@jest/globals');
+const { rows } = require('pg/lib/defaults');
 
 beforeEach(() => {
     return seed(testData);
@@ -388,14 +390,18 @@ describe('DELETE - /api/comments/:comment_id', () => {
     test('responds with a 204 status code', () => {
         return request(app)
             .delete('/api/comments/1')
-            .expect(204);
+            .expect(204)
+            .then(() => {
+                db.query(`SELECT * FROM comments WHERE comment_id = 1;`).then(({ rows }) => rows)
+                expect(rows).toBe(0);
+            });
     });
     test('responds with a 404 status code when passed a comment_id that does not exist', () => {
         return request(app)
             .delete('/api/comments/45625')
             .expect(404)
             .then(({ body }) => {
-                expect(body.message).toBe('comment not found')
+                expect(body.message).toBe('comment not found');
             })
     });
     test('responds with a 400 status code when passed an invalid comment_id', () => {
