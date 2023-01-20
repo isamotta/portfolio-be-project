@@ -2,11 +2,13 @@ const express = require('express');
 const getAllCategories = require('./controllers/categories');
 const { getAllReviews, getReviewById, getCommentsById, postComment, patchVotes } = require('./controllers/reviews');
 const { getAllUsers } = require('./controllers/users');
-const { deleteComment } = require('./controllers/comments')
+const { deleteComment } = require('./controllers/comments');
+const getAllEndpoints = require('./controllers/endpoint');
 const app = express();
 
 app.use(express.json());
 
+app.get('/api', getAllEndpoints)
 app.get('/api/categories', getAllCategories);
 app.get('/api/reviews', getAllReviews);
 app.get('/api/reviews/:review_id', getReviewById);

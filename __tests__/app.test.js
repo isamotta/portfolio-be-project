@@ -3,8 +3,8 @@ const app = require('../app');
 const db = require("../db/connection");
 const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data/index');
-const { expect } = require('@jest/globals');
 const { rows } = require('pg/lib/defaults');
+
 
 beforeEach(() => {
     return seed(testData);
@@ -410,6 +410,25 @@ describe('DELETE - /api/comments/:comment_id', () => {
             .expect(400)
             .then(({ body }) => {
                 expect(body.message).toBe('bad request')
+            })
+    });
+})
+
+describe('GET - /api', () => {
+    test('responds with a JSON object with all the available endpoints', () => {
+        return request(app)
+            .get('/api')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.availableEndpoints).toHaveProperty("GET /api");
+                expect(body.availableEndpoints).toHaveProperty("GET /api/categories");
+                expect(body.availableEndpoints).toHaveProperty("GET /api/reviews");
+                expect(body.availableEndpoints).toHaveProperty("GET /api/reviews/:review_id");
+                expect(body.availableEndpoints).toHaveProperty("GET /api/reviews/:review_id/comments");
+                expect(body.availableEndpoints).toHaveProperty("POST /api/reviews/:review_id/comments");
+                expect(body.availableEndpoints).toHaveProperty("PACTH /api/reviews/:review_id");
+                expect(body.availableEndpoints).toHaveProperty("GET /api/users");
+                expect(body.availableEndpoints).toHaveProperty("DELETE /api/comments/:comment_id");
             })
     });
 })
