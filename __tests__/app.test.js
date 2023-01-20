@@ -127,7 +127,7 @@ describe('GET - /api/reviews', () => {
 })
 
 describe('GET - /api/reviews/:review_id', () => {
-    test('responds with a 200 status code and a review object with review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at properties', () => {
+    test('responds with a 200 status code and a review object with review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at and comment_count properties', () => {
         return request(app)
             .get('/api/reviews/1')
             .expect(200)
@@ -141,6 +141,7 @@ describe('GET - /api/reviews/:review_id', () => {
                 expect(typeof body.review.votes).toBe('number');
                 expect(typeof body.review.designer).toBe('string');
                 expect(typeof body.review.review_body).toBe('string');
+                expect(body.review.comment_count).toBe(0);
             })
     });
     test('responds with a 404 status code when review_id does not exist', () => {
