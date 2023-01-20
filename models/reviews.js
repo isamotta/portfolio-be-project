@@ -24,8 +24,14 @@ const fetchAllReviews = (sort_by = 'created_at', order = 'desc', category) => {
         return Promise.reject({ status: 400, message: 'bad request' })
     }
     return db.query(queryStr, queryValues).then(({ rows }) => {
+        return rows;
+    })
+}
+
+const fetchCategoryBySlug = (category) => {
+    return db.query(`SELECT * FROM categories WHERE slug = $1`, [category]).then(({ rows }) => {
         if (rows.length === 0) {
-            return Promise.reject({ status: 404, message: 'category not found' })
+            return Promise.reject({ status: 404, message: 'category not found' });
         }
         return rows;
     })
@@ -67,4 +73,4 @@ const incrementVotes = (review_id, inc_votes) => {
         })
 }
 
-module.exports = { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId, addComment, incrementVotes };
+module.exports = { fecthCommentsByReviewId, fecthReviewById, fetchAllReviews, fetchCategoryBySlug, addComment, incrementVotes };

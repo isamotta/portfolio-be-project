@@ -1,12 +1,20 @@
-const { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId, addComment, incrementVotes } = require('../models/reviews')
+const { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId, addComment, incrementVotes, fetchCategoryBySlug } = require('../models/reviews')
 
 const getAllReviews = (req, res, next) => {
     const { category, sort_by, order } = req.query;
-    fetchAllReviews(sort_by, order, category).then((result) => {
-        res.status(200).send({ reviews: result });
-    }).catch((err) => {
-        next(err);
-    })
+    if (category) {
+        Promise.all([fetchAllReviews(sort_by, order, category), fetchCategoryBySlug(category)]).then((values) => {
+            res.status(200).send({ reviews: values[0] });
+        }).catch((err) => {
+            next(err);
+        })
+    } else {
+        fetchAllReviews(sort_by, order, category).then((reviews) => {
+            res.status(200).send({ reviews });
+        }).catch((err) => {
+            next(err);
+        })
+    }
 }
 
 const getReviewById = (req, res, next) => {

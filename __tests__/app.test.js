@@ -116,16 +116,14 @@ describe('GET - /api/reviews', () => {
                 expect(body.message).toBe('category not found');
             })
     });
-    //failing test 
-
-    // test('responds with a 200 status code when passed a category that does not have any reviews', () => {
-    //     return request(app)
-    //         .get('/api/reviews?category=childrens-games')
-    //         .expect(200)
-    //         .then(({ body }) => {
-    //             expect(body.review.length).toBe(0);
-    //         })
-    // });
+    test('responds with a 200 status code when passed a category that does not have any reviews', () => {
+        return request(app)
+            .get('/api/reviews?category=children\'s games')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.reviews.length).toBe(0);
+            })
+    });
 })
 
 describe('GET - /api/reviews/:review_id', () => {
