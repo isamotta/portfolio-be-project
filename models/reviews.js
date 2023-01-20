@@ -1,18 +1,43 @@
 const db = require('../db/connection');
 
-const fetchAllReviews = () => {
-    return db.query(`
+const fetchAllReviews = (sort_by = 'created_at', order = 'desc', category) => {
+    const accepetedSortBy = ['title', 'designer', 'owner', 'review_img_url', 'review_body', 'category', 'created_at', 'review_id', 'votes'];
+
+    const accepetedOrder = ['asc', 'desc'];
+
+    const queryValues = [];
+
+    let queryStr = `
     SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, 
     CAST((SELECT COUNT(comments.review_id) FROM comments WHERE comments.review_id = reviews.review_id) AS int)
     AS comment_count
-    FROM reviews
-    ORDER BY reviews.created_at DESC;
-    `).then((result) => {
-        return result.rows;
+    FROM reviews `;
+
+    if (category) {
+        queryStr += `WHERE category = $1 `;
+        queryValues.push(category);
+    }
+
+    queryStr += `ORDER BY ${sort_by} ${order}`;
+
+    if (!accepetedSortBy.includes(sort_by) || !accepetedOrder.includes(order)) {
+        return Promise.reject({ status: 400, message: 'bad request' })
+    }
+    return db.query(queryStr, queryValues).then(({ rows }) => {
+        return rows;
     })
 }
 
-const fecthReviewById = (review_id) => {
+const fetchCategoryBySlug = (category) => {
+    return db.query(`SELECT * FROM categories WHERE slug = $1`, [category]).then(({ rows }) => {
+        if (rows.length === 0) {
+            return Promise.reject({ status: 404, message: 'category not found' });
+        }
+        return rows;
+    })
+}
+
+const fetchReviewById = (review_id) => {
     const query = `SELECT * FROM reviews WHERE review_id = $1`
     return db.query(query, [review_id]).then(({ rows }) => {
         if (rows.length === 0) {
@@ -22,7 +47,7 @@ const fecthReviewById = (review_id) => {
     })
 }
 
-const fecthCommentsByReviewId = (review_id) => {
+const fetchCommentsByReviewId = (review_id) => {
     const query = `SELECT * FROM comments WHERE review_id = $1`;
     return db.query(query, [review_id]).then(({ rows }) => rows)
 }
@@ -48,4 +73,4 @@ const incrementVotes = (review_id, inc_votes) => {
         })
 }
 
-module.exports = { fetchAllReviews, fecthReviewById, fecthCommentsByReviewId, addComment, incrementVotes };
+module.exports = { fetchCommentsByReviewId, fetchReviewById, fetchAllReviews, fetchCategoryBySlug, addComment, incrementVotes };

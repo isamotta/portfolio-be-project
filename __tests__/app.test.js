@@ -59,12 +59,69 @@ describe('GET - /api/reviews', () => {
                 })
             })
     });
-    test('responds with an array of review objects sorted by date in descending order', () => {
+    test('responds with an array of all reviews sorted by date in descending order if no sort_by or order query is passed', () => {
         return request(app)
             .get('/api/reviews')
             .expect(200)
             .then(({ body }) => {
                 expect(body.reviews).toBeSortedBy('created_at', { descending: true });
+            })
+    });
+    test('accepts an order query and responds with an array of review objects sorted by date and ordered by query', () => {
+        return request(app)
+            .get('/api/reviews?order=asc')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.reviews).toBeSortedBy('created_at');
+            })
+    });
+    test('accepts a sort_by query and responds with an array of review objects sorted by query in descending order if no order is passed', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=title')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.reviews).toBeSortedBy('title', { descending: true });
+            })
+    });
+    test('accepts a category query and responds with an array of reviews selected by the category', () => {
+        return request(app)
+            .get('/api/reviews?category=dexterity')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.reviews.length).toBe(1);
+                expect(body.reviews[0].title).toBe('Jenga');
+            })
+    });
+    test('responds with a 400 status code when passed an invalid sort_by query', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=name')
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request');
+            })
+    });
+    test('responds with a 400 status code when passed an invalid order query', () => {
+        return request(app)
+            .get('/api/reviews?order=asce')
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request');
+            })
+    });
+    test('responds with a 404 status code when passed a category that does not exist', () => {
+        return request(app)
+            .get('/api/reviews?category=dogs&cats')
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('category not found');
+            })
+    });
+    test('responds with a 200 status code when passed a category that does not have any reviews', () => {
+        return request(app)
+            .get('/api/reviews?category=children\'s games')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.reviews.length).toBe(0);
             })
     });
 })
