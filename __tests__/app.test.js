@@ -386,6 +386,31 @@ describe('GET - /api/users', () => {
     });
 })
 
+describe('GET - /api/users/:username', () => {
+    test('responds with a 200 status code and a user object with username, avatar_url and name properties', () => {
+        return request(app)
+            .get('/api/users/mallionaire')
+            .expect(200)
+            .then(({ body }) => {
+                const userObj = {
+                    username: 'mallionaire',
+                    name: 'haz',
+                    avatar_url:
+                        'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+                }
+                expect(body.user).toEqual(userObj)
+            })
+    });
+    test('responds with a 404 status code when passed a username that does not exist', () => {
+        return request(app)
+            .get('/api/users/isa')
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('username not found');
+            })
+    });
+})
+
 describe('DELETE - /api/comments/:comment_id', () => {
     test('responds with a 204 status code', () => {
         return request(app)
