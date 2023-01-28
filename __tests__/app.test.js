@@ -300,7 +300,7 @@ describe('PATCH - /api/reviews/:review_id', () => {
                 })
             })
     });
-    test('adds the new ammount of votes in the database', () => {
+    test('adds the new amount of votes in the database', () => {
         return request(app)
             .patch('/api/reviews/1')
             .send({ inc_votes: 4 })
@@ -435,6 +435,72 @@ describe('DELETE - /api/comments/:comment_id', () => {
             .expect(400)
             .then(({ body }) => {
                 expect(body.message).toBe('bad request')
+            })
+    });
+})
+
+describe('PATCH - /api/comments/:comment_id', () => {
+    test('responds with a 200 status code and a comment object with votes property incremented', () => {
+        return request(app)
+            .patch('/api/comments/1')
+            .send({ inc_votes: 1 })
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.comment.votes).toBe(17);
+            })
+    });
+    test('responds with a 200 status code and a comment object with votes property decremented', () => {
+        return request(app)
+            .patch('/api/comments/1')
+            .send({ inc_votes: -5 })
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.comment.votes).toBe(11)
+            })
+    });
+    test('responds with a 404 status code when given a comment_id that does not exist', () => {
+        return request(app)
+            .patch('/api/comments/45632')
+            .send({ inc_votes: 1 })
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('comment_id not found');
+            })
+    });
+    test('responds with a 400 status code when given an invalid comment_id', () => {
+        return request(app)
+            .patch('/api/comments/isa')
+            .send({ inc_votes: 1 })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request');
+            })
+    });
+    test('responds with a 400 status code when no increment votes is passed', () => {
+        return request(app)
+            .patch('/api/comments/1')
+            .send({})
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request');
+            })
+    });
+    test('responds with a 400 status code when passed an invalid increment votes', () => {
+        return request(app)
+            .patch('/api/comments/1')
+            .send({ inc_votes: 'one' })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request');
+            })
+    });
+    test('responds with a 200 status code ignoring additional properties passed', () => {
+        return request(app)
+            .patch('/api/comments/1')
+            .send({ inc_votes: 1, username: 'isa' })
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.comment.votes).toBe(17);
             })
     });
 })
