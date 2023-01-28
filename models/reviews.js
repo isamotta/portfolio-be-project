@@ -74,4 +74,11 @@ const incrementVotes = (review_id, inc_votes) => {
         })
 }
 
-module.exports = { fetchCommentsByReviewId, fetchReviewById, fetchAllReviews, fetchCategoryBySlug, addComment, incrementVotes };
+const addReview = (owner, title, review_body, designer, category, review_img_url) => {
+    const query = `INSERT INTO reviews (title, review_body, designer, review_img_url, owner, category) VALUES ($1, $2, $3, $4,  (SELECT username FROM users WHERE users.username = $5), (SELECT slug FROM categories WHERE slug = $6)) RETURNING review_id, votes, created_at;`;
+    return db.query(query, [title, review_body, designer, review_img_url, owner, category]).then(({ rows }) => {
+        return rows[0];
+    })
+}
+
+module.exports = { fetchCommentsByReviewId, fetchReviewById, fetchAllReviews, fetchCategoryBySlug, addComment, incrementVotes, addReview };

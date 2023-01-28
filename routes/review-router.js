@@ -1,9 +1,10 @@
-const { getAllReviews, getReviewById, patchVotes, getCommentsById, postComment } = require('../controllers/reviews');
+const { getAllReviews, getReviewById, patchVotes, getCommentsById, postComment, postReview } = require('../controllers/reviews');
 
 const reviewRouter = require('express').Router();
 
 reviewRouter.route("/")
     .get(getAllReviews)
+    .post(postReview)
 reviewRouter.route("/:review_id")
     .get(getReviewById)
     .patch(patchVotes)

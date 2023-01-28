@@ -127,6 +127,68 @@ describe('GET - /api/reviews', () => {
     });
 })
 
+//unfinished 
+
+// describe('POST - /api/reviews', () => {
+//     test('responds with a 201 status code and accepts a review', () => {
+//         return request(app)
+//             .post('/api/reviews')
+//             .send({ owner: 'philippaclaire9', title: 'noughts and crosses', review_body: 'good for children', designer: 'Jenna K', category: 'children\'s game', review_img_url: 'https://dictionary.cambridge.org/images/thumb/nought_noun_002_25125.jpg?version=5.0.288' })
+//             .expect(201)
+//             .then(({ body }) => {
+//                 expect(body.newReview).toHaveProperty('created_at');
+//                 expect(body.newReview.review_id).toBe(14)
+//                 expect(body.newReview.votes).toBe(0)
+//                 // expect(body.newReview.comment_count).toBe(0)
+//             })
+//     });
+    // test('responds with a 404 status code when given a review_id does not exist', () => {
+    //     return request(app)
+    //         .post('/api/reviews/456251/comments')
+    //         .send({ username: 'philippaclaire9', body: 'love this game!' })
+    //         .expect(404)
+    //         .then(({ body }) => {
+    //             expect(body.message).toBe('review_id not found')
+    //         })
+    // });
+    // test('responds with a 400 status code when given a username thats does not exist', () => {
+    //     return request(app)
+    //         .post('/api/reviews/1/comments')
+    //         .send({ username: 'isa', body: 'love this game!' })
+    //         .expect(400)
+    //         .then(({ body }) => {
+    //             expect(body.message).toBe('bad request')
+    //         })
+    // });
+    // test('responds with a 400 status code when passed an invalid review_id', () => {
+    //     return request(app)
+    //         .post('/api/reviews/dogs/comments')
+    //         .send({ username: 'philippaclaire9', body: 'love this game!' })
+    //         .expect(400)
+    //         .then(({ body }) => {
+    //             expect(body.message).toBe('bad request')
+    //         })
+    // });
+    // test('responds with a 400 status code when no body is passed', () => {
+    //     return request(app)
+    //         .post('/api/reviews/1/comments')
+    //         .send({})
+    //         .expect(400)
+    //         .then(({ body }) => {
+    //             expect(body.message).toBe('bad request')
+    //         })
+    // });
+    // test('responds with a 400 status code when key is missing in the passed body', () => {
+    //     return request(app)
+    //         .post('/api/reviews/1/comments')
+    //         .send({ username: 'philippaclaire9' })
+    //         .expect(400)
+    //         .then(({ body }) => {
+    //             expect(body.message).toBe('bad request')
+    //         })
+    // });
+})
+
 describe('GET - /api/reviews/:review_id', () => {
     test('responds with a 200 status code and a review object with review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at and comment_count properties', () => {
         return request(app)
@@ -505,6 +567,7 @@ describe('PATCH - /api/comments/:comment_id', () => {
     });
 })
 
+//check the last test
 describe('GET - /api', () => {
     test('responds with a JSON object with all the available endpoints', () => {
         return request(app)
