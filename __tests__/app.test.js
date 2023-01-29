@@ -129,19 +129,26 @@ describe('GET - /api/reviews', () => {
 
 //unfinished 
 
-// describe('POST - /api/reviews', () => {
-//     test('responds with a 201 status code and accepts a review', () => {
-//         return request(app)
-//             .post('/api/reviews')
-//             .send({ owner: 'philippaclaire9', title: 'noughts and crosses', review_body: 'good for children', designer: 'Jenna K', category: 'children\'s game', review_img_url: 'https://dictionary.cambridge.org/images/thumb/nought_noun_002_25125.jpg?version=5.0.288' })
-//             .expect(201)
-//             .then(({ body }) => {
-//                 expect(body.newReview).toHaveProperty('created_at');
-//                 expect(body.newReview.review_id).toBe(14)
-//                 expect(body.newReview.votes).toBe(0)
-//                 // expect(body.newReview.comment_count).toBe(0)
-//             })
-//     });
+describe('POST - /api/reviews', () => {
+    test('responds with a 201 status code and accepts a review', () => {
+        return request(app)
+            .post('/api/reviews')
+            .send({
+                owner: 'philippaclaire9',
+                title: 'noughts and crosses',
+                review_body: 'good for children',
+                designer: 'Jenna K',
+                category: "children's games",
+                review_img_url: 'https://dictionary.cambridge.org/images/thumb/nought_noun_002_25125.jpg?version=5.0.288'
+            })
+            .expect(201)
+            .then(({ body }) => {
+                expect(body.newReview).toHaveProperty('created_at');
+                expect(body.newReview.review_id).toBe(14)
+                expect(body.newReview.votes).toBe(0)
+                // expect(body.newReview.comment_count).toBe(0)
+            })
+    });
     // test('responds with a 404 status code when given a review_id does not exist', () => {
     //     return request(app)
     //         .post('/api/reviews/456251/comments')
