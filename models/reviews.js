@@ -1,9 +1,9 @@
 const db = require('../db/connection');
 
 const fetchAllReviews = (sort_by = 'created_at', order = 'desc', category) => {
-    const accepetedSortBy = ['title', 'designer', 'owner', 'review_img_url', 'review_body', 'category', 'created_at', 'review_id', 'votes'];
+    const acceptedSortBy = ['title', 'designer', 'owner', 'review_img_url', 'review_body', 'category', 'created_at', 'review_id', 'votes'];
 
-    const accepetedOrder = ['asc', 'desc'];
+    const acceptedOrder = ['asc', 'desc'];
 
     const queryValues = [];
 
@@ -20,7 +20,7 @@ const fetchAllReviews = (sort_by = 'created_at', order = 'desc', category) => {
 
     queryStr += `ORDER BY ${sort_by} ${order}`;
 
-    if (!accepetedSortBy.includes(sort_by) || !accepetedOrder.includes(order)) {
+    if (!acceptedSortBy.includes(sort_by) || !acceptedOrder.includes(order)) {
         return Promise.reject({ status: 400, message: 'bad request' })
     }
     return db.query(queryStr, queryValues).then(({ rows }) => {
@@ -75,8 +75,20 @@ const incrementVotes = (review_id, inc_votes) => {
 }
 
 const addReview = (owner, title, review_body, designer, category, review_img_url) => {
-    const query = `INSERT INTO reviews (title, review_body, designer, review_img_url, owner, category) VALUES ($1, $2, $3, $4, $5, $6) RETURNING review_id, votes, created_at;`;
-    return db.query(query, [title, review_body, designer, review_img_url, owner, category]).then(({ rows }) => {
+    const columns = ['title', 'review_body', 'designer', 'owner', 'category'];
+
+    const values = [title, review_body, designer, owner, category];
+
+    const params = ['$1', '$2', '$3', '$4', '$5'];
+
+    if (review_img_url) {
+        columns.push('review_img_url');
+        values.push(review_img_url);
+        params.push('$6');
+    }
+
+    const query = `INSERT INTO reviews (${columns.join(', ')}) VALUES (${params.join(', ')}) RETURNING *, CAST(0 AS INT) AS comment_count`;
+    return db.query(query, values).then(({ rows }) => {
         return rows[0];
     })
 }

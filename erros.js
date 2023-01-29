@@ -16,7 +16,7 @@ const psqlErrorHandler = (err, req, res, next) => {
 
 const psqlNotFound = (err, req, res, next) => {
     if (err.code === '23503') {
-        res.status(404).send({ message: 'review_id not found' });
+        res.status(404).send({ message: 'not found' });
     } else {
         next(err);
     }

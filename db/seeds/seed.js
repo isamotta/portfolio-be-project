@@ -92,15 +92,15 @@ const seed = ({ categoryData, commentData, reviewData, userData }) => {
             created_at,
             votes
           }) => [
-            title,
-            category,
-            designer,
-            owner,
-            review_body,
-            review_img_url,
-            created_at,
-            votes
-          ]
+              title,
+              category,
+              designer,
+              owner,
+              review_body,
+              review_img_url,
+              created_at,
+              votes
+            ]
         )
       );
 

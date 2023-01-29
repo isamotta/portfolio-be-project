@@ -66,11 +66,13 @@ const patchVotes = (req, res, next) => {
 
 const postReview = (req, res, next) => {
     const { owner, title, review_body, designer, category, review_img_url } = req.body
-    addReview(owner, title, review_body, designer, category, review_img_url).then((result) => {
-        res.status(201).send({ newReview: result })
-    }).catch((err) => {
-        next(err);
-    })
+    addReview(owner, title, review_body, designer, category, review_img_url)
+        .then((result) => {
+            res.status(201).send({ newReview: result })
+        })
+        .catch((err) => {
+            next(err);
+        })
 }
 
 module.exports = { getAllReviews, getReviewById, getCommentsById, postComment, patchVotes, postReview };
