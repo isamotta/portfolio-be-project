@@ -41,12 +41,11 @@ describe("GET - /api/categories", () => {
 })
 
 describe('GET - /api/reviews', () => {
-    test('responds with a 200 status code and with an array of review objects with owner, title, review_id, category, review_img_url, created_at, votes, designer, comment_count properties', () => {
+    test('responds with a 200 status code and with an array of review objects with owner, title, review_id, category, review_img_url, created_at, votes, designer, comment_count properties ', () => {
         return request(app)
             .get('/api/reviews')
             .expect(200)
             .then(({ body }) => {
-                expect(body.reviews.length).toBe(13)
                 body.reviews.forEach(review => {
                     expect(typeof review.owner).toBe('string');
                     expect(typeof review.title).toBe('string');
@@ -125,9 +124,33 @@ describe('GET - /api/reviews', () => {
                 expect(body.reviews.length).toBe(0);
             })
     });
+    test('responds with 200 status code and a list with 10 reviews when no limit is specified', () => {
+        return request(app)
+            .get('/api/reviews')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.total_count).toBe(13);
+                expect(body.reviews.length).toBe(10);
+            })
+    });
+    test('responds with 200 status code and five reviews when limit is passed as query with value of five', () => {
+        return request(app)
+            .get('/api/reviews?limit=5')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.reviews.length).toBe(5);
+            })
+    });
+    // test('responds with 200 status code and pagination of two reviews when passed limit of two and page is specified', () => {
+    //     return request(app)
+    //         .get('/api/reviews?limit=2&p=1')
+    //         .expect(200)
+    //         .then(({ body }) => {
+    //             expect(body.reviews[0].title).toBe('Agricola');
+    //             expect(body.reviews[1].title).toBe('Jenga');
+    //         })
+    // });
 })
-
-//unfinished 
 
 describe('POST - /api/reviews', () => {
     test('responds with a 201 status code and accepts a review', () => {

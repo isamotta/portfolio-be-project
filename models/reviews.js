@@ -1,6 +1,6 @@
 const db = require('../db/connection');
 
-const fetchAllReviews = (sort_by = 'created_at', order = 'desc', category) => {
+const fetchAllReviews = (sort_by = 'created_at', order = 'desc', limit = '10', category) => {
     const acceptedSortBy = ['title', 'designer', 'owner', 'review_img_url', 'review_body', 'category', 'created_at', 'review_id', 'votes'];
 
     const acceptedOrder = ['asc', 'desc'];
@@ -18,7 +18,7 @@ const fetchAllReviews = (sort_by = 'created_at', order = 'desc', category) => {
         queryValues.push(category);
     }
 
-    queryStr += `ORDER BY ${sort_by} ${order}`;
+    queryStr += `ORDER BY ${sort_by} ${order} LIMIT ${limit}`;
 
     if (!acceptedSortBy.includes(sort_by) || !acceptedOrder.includes(order)) {
         return Promise.reject({ status: 400, message: 'bad request' })
@@ -35,6 +35,18 @@ const fetchCategoryBySlug = (category) => {
         }
         return rows;
     })
+}
+
+const fetchTotalCount = (category) => {
+    let query = `SELECT CAST(COUNT(1) AS INT) AS total_count FROM reviews`;
+    const queryValues = [];
+
+    if (category) {
+        query += ` WHERE category = $1`;
+        queryValues.push(category);
+    }
+
+    return db.query(query, queryValues).then(({ rows }) => rows[0].total_count);
 }
 
 const fetchReviewById = (review_id) => {
@@ -93,4 +105,4 @@ const addReview = (owner, title, review_body, designer, category, review_img_url
     })
 }
 
-module.exports = { fetchCommentsByReviewId, fetchReviewById, fetchAllReviews, fetchCategoryBySlug, addComment, incrementVotes, addReview };
+module.exports = { fetchCommentsByReviewId, fetchReviewById, fetchAllReviews, fetchCategoryBySlug, addComment, incrementVotes, addReview, fetchTotalCount };
