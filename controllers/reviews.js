@@ -31,7 +31,9 @@ const getReviewById = (req, res, next) => {
 
 const getCommentsById = (req, res, next) => {
     const { review_id } = req.params;
-    Promise.all([fetchReviewById(review_id), fetchCommentsByReviewId(review_id)])
+    const { limit, p } = req.query;
+
+    Promise.all([fetchReviewById(review_id), fetchCommentsByReviewId(review_id, limit, p)])
         .then((values) => {
             res.status(200).send({ comments: values[1] })
         })

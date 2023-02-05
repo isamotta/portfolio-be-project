@@ -40,6 +40,35 @@ describe("GET - /api/categories", () => {
     });
 })
 
+describe("POST - api/categories", () => {
+    test('responds with a 201 status code and accepts a new category', () => {
+        const newCategory = {
+            slug: 'board',
+            description: 'games to play with friends'
+        };
+        return request(app)
+            .post('/api/categories')
+            .send(newCategory)
+            .expect(201)
+            .then(({ body }) => {
+                expect(body.newCategory.slug).toBe('board');
+                expect(body.newCategory.description).toBe('games to play with friends');
+            })
+    });
+    test('responds with a 400 status code when slug is missing in the passed body', () => {
+        const newCategory = {
+            description: 'games to play with friends'
+        };
+        return request(app)
+            .post('/api/categories')
+            .send(newCategory)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request')
+            })
+    });
+})
+
 describe('GET - /api/reviews', () => {
     test('responds with a 200 status code and with an array of review objects with owner, title, review_id, category, review_img_url, created_at, votes, designer, comment_count properties ', () => {
         return request(app)
@@ -338,6 +367,22 @@ describe('GET - /api/reviews/:review_id/comments', () => {
             .expect(400)
             .then(({ body }) => {
                 expect(body.message).toBe('bad request');
+            })
+    });
+    test('responds with 200 status code and a list with two comments when limit is specified', () => {
+        return request(app)
+            .get('/api/reviews/2/comments?limit=2')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.comments.length).toBe(2);
+            })
+    });
+    test('responds with 200 status code and pagination of two comments when passed limit of two and page is specified', () => {
+        return request(app)
+            .get('/api/reviews/2/comments?limit=2&p=2')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.comments[0].body).toBe('Now this is a story all about how, board games turned my life upside down');
             })
     });
 })

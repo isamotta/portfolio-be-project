@@ -62,8 +62,10 @@ const fetchReviewById = (review_id) => {
     })
 }
 
-const fetchCommentsByReviewId = (review_id) => {
-    const query = `SELECT * FROM comments WHERE review_id = $1`;
+const fetchCommentsByReviewId = (review_id, limit = 10, p = 1) => {
+    let offset = limit * p - limit;
+    const query = `SELECT * FROM comments WHERE review_id = $1 LIMIT ${limit} OFFSET ${offset}`;
+
     return db.query(query, [review_id]).then(({ rows }) => rows)
 }
 
