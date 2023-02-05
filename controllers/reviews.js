@@ -1,4 +1,4 @@
-const { fetchAllReviews, fetchReviewById, fetchCommentsByReviewId, addComment, incrementVotes, fetchCategoryBySlug, addReview, fetchTotalCount } = require('../models/reviews')
+const { fetchAllReviews, fetchReviewById, fetchCommentsByReviewId, addComment, incrementVotes, fetchCategoryBySlug, addReview, fetchTotalCount, removeReviewById } = require('../models/reviews')
 
 const getAllReviews = (req, res, next) => {
     const { category, sort_by, order, limit, p } = req.query;
@@ -78,4 +78,13 @@ const postReview = (req, res, next) => {
         })
 }
 
-module.exports = { getAllReviews, getReviewById, getCommentsById, postComment, patchVotes, postReview };
+const deleteReview = (req, res, next) => {
+    const { review_id } = req.params;
+    removeReviewById(review_id).then((result) => {
+        res.status(204).send({});
+    }).catch((err) => {
+        next(err);
+    })
+}
+
+module.exports = { getAllReviews, getReviewById, getCommentsById, postComment, patchVotes, postReview, deleteReview };

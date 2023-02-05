@@ -328,6 +328,34 @@ describe('GET - /api/reviews/:review_id', () => {
     });
 })
 
+describe('DELETE - /api/reviews/:review_id', () => {
+    test('responds with a 204 status code', () => {
+        return request(app)
+            .delete('/api/reviews/1')
+            .expect(204)
+            .then(() => {
+                db.query(`SELECT * FROM reviews WHERE review_id = 1;`).then(({ rows }) => rows)
+                expect(rows).toBe(0);
+            });
+    });
+    test('responds with a 404 status code when passed a review_id that does not exist', () => {
+        return request(app)
+            .delete('/api/reviews/154658')
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('review not found');
+            })
+    });
+    test('responds with a 400 status code when passed an invalid review_id', () => {
+        return request(app)
+            .delete('/api/reviews/my-review')
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('bad request')
+            })
+    });
+})
+
 describe('GET - /api/reviews/:review_id/comments', () => {
     test('responds with a 200 status code and an array of comments object of the given review_id with comment_id, votes, created_at, author, body, review_id properties', () => {
         return request(app)
@@ -673,9 +701,8 @@ describe('PATCH - /api/comments/:comment_id', () => {
                 expect(body.comment.votes).toBe(17);
             })
     });
-})
+});
 
-//check the last test
 describe('GET - /api', () => {
     test('responds with a JSON object with all the available endpoints', () => {
         return request(app)
@@ -684,13 +711,18 @@ describe('GET - /api', () => {
             .then(({ body }) => {
                 expect(body.availableEndpoints).toHaveProperty("GET /api");
                 expect(body.availableEndpoints).toHaveProperty("GET /api/categories");
+                expect(body.availableEndpoints).toHaveProperty("POST /api/categories");
                 expect(body.availableEndpoints).toHaveProperty("GET /api/reviews");
+                expect(body.availableEndpoints).toHaveProperty("POST /api/reviews");
                 expect(body.availableEndpoints).toHaveProperty("GET /api/reviews/:review_id");
+                expect(body.availableEndpoints).toHaveProperty("PATCH /api/reviews/:review_id");
+                expect(body.availableEndpoints).toHaveProperty("DELETE /api/reviews/:review_id");
                 expect(body.availableEndpoints).toHaveProperty("GET /api/reviews/:review_id/comments");
                 expect(body.availableEndpoints).toHaveProperty("POST /api/reviews/:review_id/comments");
-                expect(body.availableEndpoints).toHaveProperty("PACTH /api/reviews/:review_id");
                 expect(body.availableEndpoints).toHaveProperty("GET /api/users");
+                expect(body.availableEndpoints).toHaveProperty("GET /api/users/:username");
                 expect(body.availableEndpoints).toHaveProperty("DELETE /api/comments/:comment_id");
+                expect(body.availableEndpoints).toHaveProperty("PATCH /api/comments/:comment_id");
             })
     });
-})
+});
