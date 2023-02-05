@@ -1,49 +1,50 @@
 # Northcoders House of Games API
 
-## Background
+## Overview
 
-This is an API of games reviews, written using Node.js (minimum version 19.3) and postgreSQL (minimum version 12.12).
+This service exposes an API for games reviews. As a user, you can create reviews that belongs to given category, which can receive comments and votes by other users.
 
-I am building an API for the purpose of accessing application data programmatically. The intention here is to mimic the building of a real world backend service (such as reddit) which should provide this information to the front end architecture.
+## Host
 
-## Host link
+Documentation for the use of the API can be found [here](https://nc-games-be-project.onrender.com/api)
 
-You can find the hosted version [here](https://nc-games-be-project.onrender.com)
+## How to run the service
 
-## Available Endpoints
+### Requirements
 
-To check all the available endpoints click [here](https://nc-games-be-project.onrender.com/api)
+It's required to install the following tools in order to run it locally:
 
-## Installation
+- [Node](https://nodejs.org/en/download/) version >= 19.3
+- [PostgreSQL](https://www.postgresql.org/) version >= 12.12
+- [dotenv](https://www.npmjs.com/package/dotenv)
+- [express](https://expressjs.com/)
+- [node-postgres](https://node-postgres.com/)
+- [pg-format](https://www.npmjs.com/package/pg-format)
+- [jest](https://www.npmjs.com/package/jest)
+- [jest-sorted](https://www.npmjs.com/package/jest-sorted)
+- [supertest](https://www.npmjs.com/package/supertest)
 
-Clone this [repo](https://github.com/isamotta/portfolio-be-project.git) down on to you local machine.
 
-You will need to have installed:
+### Database configuration
 
-> node
-> 
-> postgreSQL
-> 
-> dotenv
-> 
-> express
-> 
-> pg
-> 
-> pg-format
-> 
-> jest
-> 
-> jest-sorted
-> 
-> supertest
+It's necessary to create the environment variables in order to successfully connect to the local database. Add a new file called ```.env``` to the root folder with the following content: 
 
-## To connect the database locally
+```
+PGDATABASE=nc_games
+```
 
-The database used is PSQL, and you will interact with it using [node-postgres](https://node-postgres.com/).
+### Running
 
-You'll need to create the environment variables in order to successfully connect to the two databases locally. You will need to create two .env files for your project: .env.test and .env.development. Into each, add PGDATABASE=<database_name_here>, with the correct database name for that environment.
+Execute the following command:
 
-## Testing
+```
+node listen.js
+```
 
-Run the command: **npm test**
+## Running local tests
+
+Execute the following command:
+
+```
+npm test
+```
