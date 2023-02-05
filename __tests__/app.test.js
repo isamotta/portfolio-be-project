@@ -141,15 +141,24 @@ describe('GET - /api/reviews', () => {
                 expect(body.reviews.length).toBe(5);
             })
     });
-    // test('responds with 200 status code and pagination of two reviews when passed limit of two and page is specified', () => {
-    //     return request(app)
-    //         .get('/api/reviews?limit=2&p=1')
-    //         .expect(200)
-    //         .then(({ body }) => {
-    //             expect(body.reviews[0].title).toBe('Agricola');
-    //             expect(body.reviews[1].title).toBe('Jenga');
-    //         })
-    // });
+    test('responds with 200 status code and pagination of two reviews when passed limit of two and page is specified', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=title&order=asc&limit=2&p=1')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.reviews[0].title).toBe('A truly Quacking Game; Quacks of Quedlinburg');
+                expect(body.reviews[1].title).toBe('Agricola');
+            })
+    });
+    test('responds with 200 status code and pagination of two reviews when passed limit of two and page is two', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=title&order=asc&limit=2&p=2')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.reviews[0].title).toBe('Build you own tour de Yorkshire');
+                expect(body.reviews[1].title).toBe('Dolor reprehenderit');
+            })
+    });
 })
 
 describe('POST - /api/reviews', () => {

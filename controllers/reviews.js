@@ -1,9 +1,9 @@
 const { fetchAllReviews, fetchReviewById, fetchCommentsByReviewId, addComment, incrementVotes, fetchCategoryBySlug, addReview, fetchTotalCount } = require('../models/reviews')
 
 const getAllReviews = (req, res, next) => {
-    const { category, sort_by, order, limit } = req.query;
+    const { category, sort_by, order, limit, p } = req.query;
 
-    const promises = [fetchAllReviews(sort_by, order, limit, category), fetchTotalCount(category)];
+    const promises = [fetchAllReviews(sort_by, order, limit, p, category), fetchTotalCount(category)];
 
     if (category) {
         promises.push(fetchCategoryBySlug(category));

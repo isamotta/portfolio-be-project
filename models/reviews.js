@@ -1,11 +1,13 @@
 const db = require('../db/connection');
 
-const fetchAllReviews = (sort_by = 'created_at', order = 'desc', limit = '10', category) => {
+const fetchAllReviews = (sort_by = 'created_at', order = 'desc', limit = '10', p = 1, category) => {
     const acceptedSortBy = ['title', 'designer', 'owner', 'review_img_url', 'review_body', 'category', 'created_at', 'review_id', 'votes'];
 
     const acceptedOrder = ['asc', 'desc'];
 
     const queryValues = [];
+
+    let offset = limit * p - limit;
 
     let queryStr = `
     SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, 
@@ -18,7 +20,7 @@ const fetchAllReviews = (sort_by = 'created_at', order = 'desc', limit = '10', c
         queryValues.push(category);
     }
 
-    queryStr += `ORDER BY ${sort_by} ${order} LIMIT ${limit}`;
+    queryStr += `ORDER BY ${sort_by} ${order} LIMIT ${limit} OFFSET ${offset}`;
 
     if (!acceptedSortBy.includes(sort_by) || !acceptedOrder.includes(order)) {
         return Promise.reject({ status: 400, message: 'bad request' })
