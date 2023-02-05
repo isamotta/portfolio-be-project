@@ -2,9 +2,7 @@ const db = require('../db/connection');
 
 const fetchAllReviews = (sort_by = 'created_at', order = 'desc', limit = '10', p = 1, category) => {
     const acceptedSortBy = ['title', 'designer', 'owner', 'review_img_url', 'review_body', 'category', 'created_at', 'review_id', 'votes'];
-
     const acceptedOrder = ['asc', 'desc'];
-
     const queryValues = [];
 
     let offset = limit * p - limit;
@@ -23,20 +21,22 @@ const fetchAllReviews = (sort_by = 'created_at', order = 'desc', limit = '10', p
     queryStr += `ORDER BY ${sort_by} ${order} LIMIT ${limit} OFFSET ${offset}`;
 
     if (!acceptedSortBy.includes(sort_by) || !acceptedOrder.includes(order)) {
-        return Promise.reject({ status: 400, message: 'bad request' })
+        return Promise.reject({ status: 400, message: 'bad request' });
     }
-    return db.query(queryStr, queryValues).then(({ rows }) => {
-        return rows;
-    })
+
+    return db.query(queryStr, queryValues)
+        .then(({ rows }) => rows);
 }
 
 const fetchCategoryBySlug = (category) => {
-    return db.query(`SELECT * FROM categories WHERE slug = $1`, [category]).then(({ rows }) => {
-        if (rows.length === 0) {
-            return Promise.reject({ status: 404, message: 'category not found' });
-        }
-        return rows;
-    })
+    return db.query(`SELECT * FROM categories WHERE slug = $1`, [category])
+        .then(({ rows }) => {
+            if (rows.length === 0) {
+                return Promise.reject({ status: 404, message: 'category not found' });
+            }
+
+            return rows;
+        });
 }
 
 const fetchTotalCount = (category) => {
@@ -48,53 +48,57 @@ const fetchTotalCount = (category) => {
         queryValues.push(category);
     }
 
-    return db.query(query, queryValues).then(({ rows }) => rows[0].total_count);
+    return db.query(query, queryValues)
+        .then(({ rows }) => rows[0].total_count);
 }
 
 const fetchReviewById = (review_id) => {
     const query = `SELECT *, CAST((SELECT COUNT(comments.review_id) FROM comments WHERE comments.review_id = reviews.review_id) AS int) AS comment_count FROM reviews WHERE review_id = $1`;
 
-    return db.query(query, [review_id]).then(({ rows }) => {
-        if (rows.length === 0) {
-            return Promise.reject({ status: 404, message: 'review_id not found' })
-        }
-        return rows[0];
-    })
+    return db.query(query, [review_id])
+        .then(({ rows }) => {
+            if (rows.length === 0) {
+                return Promise.reject({ status: 404, message: 'review_id not found' });
+            }
+
+            return rows[0];
+        });
 }
 
 const fetchCommentsByReviewId = (review_id, limit = 10, p = 1) => {
     let offset = limit * p - limit;
     const query = `SELECT * FROM comments WHERE review_id = $1 LIMIT ${limit} OFFSET ${offset}`;
 
-    return db.query(query, [review_id]).then(({ rows }) => rows)
+    return db.query(query, [review_id])
+        .then(({ rows }) => rows);
 }
 
 const addComment = (review_id, body, username) => {
     const query = `INSERT INTO comments (body, review_id, author) VALUES ($1, $2, (SELECT username FROM users WHERE users.username = $3)) RETURNING comment_id, body, review_id, author;`;
-    return db.query(query, [body, review_id, username]).then(({ rows }) => {
-        return rows[0];
-    })
+
+    return db.query(query, [body, review_id, username])
+        .then(({ rows }) => rows[0]);
 }
 
 const incrementVotes = (review_id, inc_votes) => {
     const query = `UPDATE reviews SET votes = votes + $1 WHERE review_id = $2`;
+
     return db.query(query, [inc_votes, review_id])
         .then(() => {
             return db.query(`SELECT review_id, title, designer, owner, review_img_url, review_body, category, votes FROM reviews WHERE review_id = $1`, [review_id])
                 .then(({ rows }) => {
                     if (rows.length === 0) {
-                        return Promise.reject({ status: 404, message: 'review_id not found' })
+                        return Promise.reject({ status: 404, message: 'review_id not found' });
                     }
-                    return rows[0]
-                })
-        })
+
+                    return rows[0];
+                });
+        });
 }
 
 const addReview = (owner, title, review_body, designer, category, review_img_url) => {
     const columns = ['title', 'review_body', 'designer', 'owner', 'category'];
-
     const values = [title, review_body, designer, owner, category];
-
     const params = ['$1', '$2', '$3', '$4', '$5'];
 
     if (review_img_url) {
@@ -104,17 +108,18 @@ const addReview = (owner, title, review_body, designer, category, review_img_url
     }
 
     const query = `INSERT INTO reviews (${columns.join(', ')}) VALUES (${params.join(', ')}) RETURNING *, CAST(0 AS INT) AS comment_count`;
-    return db.query(query, values).then(({ rows }) => {
-        return rows[0];
-    })
+
+    return db.query(query, values)
+        .then(({ rows }) => rows[0]);
 }
 
 const removeReviewById = (review_id) => {
-    return db.query(`DELETE FROM reviews WHERE review_id = $1`, [review_id]).then(({ rowCount }) => {
-        if (rowCount === 0) {
-            return Promise.reject({ status: 404, message: 'review not found' })
-        }
-    })
+    return db.query(`DELETE FROM reviews WHERE review_id = $1`, [review_id])
+        .then(({ rowCount }) => {
+            if (rowCount === 0) {
+                return Promise.reject({ status: 404, message: 'review not found' });
+            }
+        });
 }
 
 module.exports = { fetchCommentsByReviewId, fetchReviewById, fetchAllReviews, fetchCategoryBySlug, addComment, incrementVotes, addReview, fetchTotalCount, removeReviewById };

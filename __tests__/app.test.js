@@ -23,7 +23,7 @@ describe("/not-a-route", () => {
                 expect(body.message).toBe('route does not exist');
             })
     });
-})
+});
 
 describe("GET - /api/categories", () => {
     test('responds with a 200 status code and all the categories with a slug and a description property', () => {
@@ -38,7 +38,7 @@ describe("GET - /api/categories", () => {
                 });
             })
     });
-})
+});
 
 describe("POST - api/categories", () => {
     test('responds with a 201 status code and accepts a new category', () => {
@@ -67,7 +67,7 @@ describe("POST - api/categories", () => {
                 expect(body.message).toBe('bad request')
             })
     });
-})
+});
 
 describe('GET - /api/reviews', () => {
     test('responds with a 200 status code and with an array of review objects with owner, title, review_id, category, review_img_url, created_at, votes, designer, comment_count properties ', () => {
@@ -188,7 +188,7 @@ describe('GET - /api/reviews', () => {
                 expect(body.reviews[1].title).toBe('Dolor reprehenderit');
             })
     });
-})
+});
 
 describe('POST - /api/reviews', () => {
     test('responds with a 201 status code and accepts a review', () => {
@@ -279,7 +279,7 @@ describe('POST - /api/reviews', () => {
                 expect(body.message).toBe('bad request')
             })
     });
-})
+});
 
 describe('GET - /api/reviews/:review_id', () => {
     test('responds with a 200 status code and a review object with review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at and comment_count properties', () => {
@@ -326,7 +326,7 @@ describe('GET - /api/reviews/:review_id', () => {
                 expect(body.message).toBe('bad request');
             })
     });
-})
+});
 
 describe('DELETE - /api/reviews/:review_id', () => {
     test('responds with a 204 status code', () => {
@@ -354,7 +354,7 @@ describe('DELETE - /api/reviews/:review_id', () => {
                 expect(body.message).toBe('bad request')
             })
     });
-})
+});
 
 describe('GET - /api/reviews/:review_id/comments', () => {
     test('responds with a 200 status code and an array of comments object of the given review_id with comment_id, votes, created_at, author, body, review_id properties', () => {
@@ -413,7 +413,7 @@ describe('GET - /api/reviews/:review_id/comments', () => {
                 expect(body.comments[0].body).toBe('Now this is a story all about how, board games turned my life upside down');
             })
     });
-})
+});
 
 describe('POST - /api/reviews/:review_id/comments', () => {
     test('responds with a 201 status code and accepts a comment', () => {
@@ -476,7 +476,8 @@ describe('POST - /api/reviews/:review_id/comments', () => {
                 expect(body.message).toBe('bad request')
             })
     });
-})
+});
+
 describe('PATCH - /api/reviews/:review_id', () => {
     test('responds with a 200 status code and a review object with votes property incremented', () => {
         return request(app)
@@ -566,7 +567,7 @@ describe('PATCH - /api/reviews/:review_id', () => {
                 expect(body.review.votes).toBe(2);
             })
     });
-})
+});
 
 describe('GET - /api/users', () => {
     test('responds with a 200 status code and an array of users object with username, name and avatar_url properties', () => {
@@ -582,7 +583,7 @@ describe('GET - /api/users', () => {
                 })
             })
     });
-})
+});
 
 describe('GET - /api/users/:username', () => {
     test('responds with a 200 status code and a user object with username, avatar_url and name properties', () => {
@@ -607,7 +608,7 @@ describe('GET - /api/users/:username', () => {
                 expect(body.message).toBe('username not found');
             })
     });
-})
+});
 
 describe('DELETE - /api/comments/:comment_id', () => {
     test('responds with a 204 status code', () => {
@@ -635,7 +636,7 @@ describe('DELETE - /api/comments/:comment_id', () => {
                 expect(body.message).toBe('bad request')
             })
     });
-})
+});
 
 describe('PATCH - /api/comments/:comment_id', () => {
     test('responds with a 200 status code and a comment object with votes property incremented', () => {

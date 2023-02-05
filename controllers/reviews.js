@@ -2,7 +2,6 @@ const { fetchAllReviews, fetchReviewById, fetchCommentsByReviewId, addComment, i
 
 const getAllReviews = (req, res, next) => {
     const { category, sort_by, order, limit, p } = req.query;
-
     const promises = [fetchAllReviews(sort_by, order, limit, p, category), fetchTotalCount(category)];
 
     if (category) {
@@ -15,18 +14,19 @@ const getAllReviews = (req, res, next) => {
         })
         .catch((err) => {
             next(err);
-        })
+        });
 }
 
 const getReviewById = (req, res, next) => {
     const { review_id } = req.params;
+
     fetchReviewById(review_id)
         .then((result) => {
             res.status(200).send({ review: result });
         })
         .catch((err) => {
             next(err);
-        })
+        });
 }
 
 const getCommentsById = (req, res, next) => {
@@ -39,19 +39,20 @@ const getCommentsById = (req, res, next) => {
         })
         .catch((err) => {
             next(err);
-        })
+        });
 }
 
 const postComment = (req, res, next) => {
     const { review_id } = req.params;
     const { body, username } = req.body;
+
     addComment(review_id, body, username)
         .then((result) => {
             res.status(201).send({ newComment: result });
         })
         .catch((err) => {
             next(err);
-        })
+        });
 }
 
 const patchVotes = (req, res, next) => {
@@ -68,23 +69,27 @@ const patchVotes = (req, res, next) => {
 }
 
 const postReview = (req, res, next) => {
-    const { owner, title, review_body, designer, category, review_img_url } = req.body
+    const { owner, title, review_body, designer, category, review_img_url } = req.body;
+
     addReview(owner, title, review_body, designer, category, review_img_url)
         .then((result) => {
             res.status(201).send({ newReview: result })
         })
         .catch((err) => {
             next(err);
-        })
+        });
 }
 
 const deleteReview = (req, res, next) => {
     const { review_id } = req.params;
-    removeReviewById(review_id).then((result) => {
-        res.status(204).send({});
-    }).catch((err) => {
-        next(err);
-    })
+
+    removeReviewById(review_id)
+        .then(() => {
+            res.status(204).send({});
+        })
+        .catch((err) => {
+            next(err);
+        });
 }
 
 module.exports = { getAllReviews, getReviewById, getCommentsById, postComment, patchVotes, postReview, deleteReview };
