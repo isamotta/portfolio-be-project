@@ -8,17 +8,16 @@ const fetchAllReviews = (sort_by = 'created_at', order = 'desc', limit = '10', p
     let offset = limit * p - limit;
 
     let queryStr = `
-    SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, 
-    CAST((SELECT COUNT(comments.review_id) FROM comments WHERE comments.review_id = reviews.review_id) AS int)
-    AS comment_count
-    FROM reviews `;
+    SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.comment_id) AS comment_count FROM reviews
+    LEFT JOIN comments
+    ON reviews.review_id = comments.review_id `;
 
     if (category) {
         queryStr += `WHERE category = $1 `;
         queryValues.push(category);
     }
 
-    queryStr += `ORDER BY ${sort_by} ${order} LIMIT ${limit} OFFSET ${offset}`;
+    queryStr += `GROUP BY reviews.review_id ORDER BY ${sort_by} ${order} LIMIT ${limit} OFFSET ${offset}`;
 
     if (!acceptedSortBy.includes(sort_by) || !acceptedOrder.includes(order)) {
         return Promise.reject({ status: 400, message: 'bad request' });

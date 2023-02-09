@@ -84,7 +84,7 @@ describe('GET - /api/reviews', () => {
                     expect(typeof review.created_at).toBe('string');
                     expect(typeof review.votes).toBe('number');
                     expect(typeof review.designer).toBe('string');
-                    expect(typeof review.comment_count).toBe('number');
+                    expect(typeof review.comment_count).toBe('string');
                 })
             })
     });
