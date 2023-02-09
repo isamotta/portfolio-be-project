@@ -112,6 +112,14 @@ describe('GET - /api/reviews', () => {
                 expect(body.reviews).toBeSortedBy('title', { descending: true });
             })
     });
+    test('accepts a sort_by query and responds with an array of review objects sorted by query in descending order if no order is passed', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=comment_count')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.reviews).toBeSortedBy('comment_count', { descending: true });
+            })
+    });
     test('accepts a category query and responds with an array of reviews selected by the category', () => {
         return request(app)
             .get('/api/reviews?category=dexterity')

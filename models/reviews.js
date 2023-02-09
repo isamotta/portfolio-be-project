@@ -1,7 +1,7 @@
 const db = require('../db/connection');
 
 const fetchAllReviews = (sort_by = 'created_at', order = 'desc', limit = '10', p = 1, category) => {
-    const acceptedSortBy = ['title', 'designer', 'owner', 'review_img_url', 'review_body', 'category', 'created_at', 'review_id', 'votes'];
+    const acceptedSortBy = ['title', 'designer', 'owner', 'review_img_url', 'review_body', 'category', 'created_at', 'review_id', 'votes', 'comment_count'];
     const acceptedOrder = ['asc', 'desc'];
     const queryValues = [];
 
